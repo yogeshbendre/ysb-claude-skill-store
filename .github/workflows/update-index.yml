@@ -1,0 +1,60 @@
+name: Update Skills Index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+
+permissions:
+  contents: write
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate docs/skills-index.json
+        shell: python3 {0}
+        run: |
+          import json, glob, os
+          from datetime import date
+
+          skills = []
+          for path in sorted(glob.glob('skills/*/skill.json')):
+              with open(path) as f:
+                  try:
+                      skills.append(json.load(f))
+                  except json.JSONDecodeError as e:
+                      print(f'Warning: skipping {path} — {e}')
+
+          skills.sort(key=lambda x: x.get('name', '').lower())
+
+          repo = os.environ.get('GITHUB_REPOSITORY', 'YOUR_USERNAME/YOUR_REPO')
+          owner, _, name = repo.partition('/')
+
+          index = {
+              'repoOwner': owner,
+              'repoName':  name,
+              'skills':    skills,
+              'count':     len(skills),
+              'generatedAt': str(date.today()),
+          }
+
+          with open('docs/skills-index.json', 'w') as f:
+              json.dump(index, f, indent=2)
+
+          print(f'Indexed {len(skills)} skill(s) for {owner}/{name}')
+
+      - name: Commit and push updated index
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/skills-index.json
+          git diff --staged --quiet || git commit -m "chore: update skills index [skip ci]"
+          git push

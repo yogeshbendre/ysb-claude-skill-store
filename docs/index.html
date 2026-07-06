@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Discover and share reusable Claude Code skills — slash commands for repeatable workflows.">
+  <title>Claude Skills Hub</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="brand">
+          <span class="brand-icon">⚡</span>
+          <div>
+            <h1 class="brand-name">Claude Skills Hub</h1>
+            <p class="brand-sub">Discover and share Claude Code skills</p>
+          </div>
+        </div>
+        <span id="count" class="header-badge">Loading…</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="controls container">
+    <input type="search" id="search" placeholder="Search skills by name, description, or tag…" autocomplete="off">
+    <div id="tag-filters" class="tag-filters" role="group" aria-label="Filter by tag"></div>
+  </div>
+
+  <main class="container">
+    <div id="grid" class="grid" role="list">
+      <p class="empty">Loading skills…</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>
+        Built for the Claude Code community ·
+        <a href="https://github.com/YOUR_USERNAME/YOUR_REPO" target="_blank" rel="noopener noreferrer">GitHub</a> ·
+        <a href="https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contribute a Skill</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

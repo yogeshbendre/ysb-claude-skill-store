@@ -1,0 +1,12 @@
+{
+  "id": "code-reviewer",
+  "name": "Code Reviewer",
+  "description": "Performs a thorough code review covering bugs, security vulnerabilities, performance issues, and style — and outputs structured findings.",
+  "version": "1.0.0",
+  "author": "example-user",
+  "authorUrl": "https://github.com/example-user",
+  "tags": ["code", "review", "security", "quality"],
+  "license": "MIT",
+  "createdAt": "2026-07-01",
+  "updatedAt": "2026-07-01"
+}

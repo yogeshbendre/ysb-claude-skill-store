@@ -6,6 +6,15 @@
   <meta name="description" content="Discover and share reusable Claude Code skills — slash commands for repeatable workflows.">
   <title>Claude Skills Hub</title>
   <link rel="stylesheet" href="assets/style.css">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('claude-skills-theme');
+        var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
 
@@ -19,19 +28,45 @@
             <p class="brand-sub">Discover and share Claude Code skills</p>
           </div>
         </div>
-        <span id="count" class="header-badge">Loading…</span>
+        <div class="header-actions">
+          <span id="count" class="header-badge">Loading…</span>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme">🌙</button>
+        </div>
       </div>
     </div>
   </header>
 
   <div class="controls container">
-    <input type="search" id="search" placeholder="Search skills by name, description, or tag…" autocomplete="off">
-    <div id="tag-filters" class="tag-filters" role="group" aria-label="Filter by tag"></div>
+    <div class="controls-row">
+      <input type="search" id="search" placeholder="Search skills by name, description, or tag…" autocomplete="off">
+      <button id="filter-toggle" class="filter-toggle-btn" aria-label="Open filters">
+        <span>Filters</span>
+        <span id="filter-count-badge" class="filter-count-badge" hidden>0</span>
+      </button>
+    </div>
   </div>
 
   <main class="container">
-    <div id="grid" class="grid" role="list">
-      <p class="empty">Loading skills…</p>
+    <div class="page-layout">
+      <aside id="filter-panel" class="filter-panel">
+        <div class="filter-panel-head">
+          <h2>Filters</h2>
+          <div class="filter-panel-head-actions">
+            <button id="clear-filters" class="clear-filters-btn" type="button">Clear all</button>
+            <button id="filter-close" class="filter-close-btn" type="button" aria-label="Close filters">✕</button>
+          </div>
+        </div>
+        <div class="filter-body" id="filter-body"></div>
+      </aside>
+
+      <div class="results-col">
+        <div id="active-filters" class="active-filters"></div>
+        <div id="grid" class="grid" role="list">
+          <p class="empty">Loading skills…</p>
+        </div>
+      </div>
+
+      <div id="filter-overlay" class="filter-overlay"></div>
     </div>
   </main>
 

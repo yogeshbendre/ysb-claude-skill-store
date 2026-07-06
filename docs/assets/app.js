@@ -1,6 +1,6 @@
 let allSkills = [];
 let activeTag = null;
-let repo = { owner: 'YOUR_USERNAME', name: 'YOUR_REPO' };
+let repo = { owner: 'yogeshbendre', name: 'ysb-claude-skill-store' };
 
 async function init() {
   try {

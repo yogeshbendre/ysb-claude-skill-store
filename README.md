@@ -2,7 +2,7 @@
 
 A community repository of reusable [Claude Code](https://claude.ai/code) skills — shareable slash commands that encode repeatable workflows.
 
-**[Browse the Skills Gallery →](https://YOUR_USERNAME.github.io/YOUR_REPO)**
+**[Browse the Skills Gallery →](https://yogeshbendre.github.io/ysb-claude-skill-store)**
 
 ## What is a Skill?
 
@@ -10,11 +10,11 @@ Claude Code skills are `.md` files placed in `.claude/commands/`. When you type 
 
 ## Quick Install
 
-Find a skill in the [gallery](https://YOUR_USERNAME.github.io/YOUR_REPO) and click **Copy install** to get a one-line command:
+Find a skill in the [gallery](https://yogeshbendre.github.io/ysb-claude-skill-store) and click **Copy install** to get a one-line command:
 
 ```bash
 mkdir -p .claude/commands && curl -o .claude/commands/code-reviewer.md \
-  "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/skills/code-reviewer/skill.md"
+  "https://raw.githubusercontent.com/yogeshbendre/ysb-claude-skill-store/main/skills/code-reviewer/skill.md"
 ```
 
 Then invoke it inside Claude Code:
@@ -35,9 +35,9 @@ After creating your fork or repo:
 2. Set Source to **Deploy from a branch**
 3. Choose **main** branch and **/docs** folder, then save
 
-Your gallery will be live at `https://YOUR_USERNAME.github.io/YOUR_REPO` within a minute.
+Your gallery will be live at `https://yogeshbendre.github.io/ysb-claude-skill-store` within a minute.
 
-Update the two placeholders in `docs/skills-index.json` (`"repoOwner"` and `"repoName"`) to match your GitHub username and repository name. The GitHub Actions workflow will auto-populate these on every push to `skills/` thereafter.
+The GitHub Actions workflow auto-populates `repoOwner` and `repoName` in `docs/skills-index.json` on every push to `skills/`.
 
 ## Skills
 

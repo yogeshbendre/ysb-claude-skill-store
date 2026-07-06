@@ -1,6 +1,6 @@
 # Contributing a Skill
 
-Thank you for contributing to Claude Skills Hub! Follow these steps to add your skill to the gallery.
+Thank you for contributing to Claude Skill Store! Follow these steps to add your skill to the gallery.
 
 ## Skill Structure
 

@@ -1,4 +1,4 @@
-# Claude Skills Hub
+# Claude Skill Store
 
 A community repository of reusable [Claude Code](https://claude.ai/code) skills — shareable slash commands that encode repeatable workflows.
 

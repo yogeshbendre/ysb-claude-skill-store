@@ -19,7 +19,7 @@ async function init() {
       if (!r.ok) throw new Error(r.statusText);
       return r.json();
     });
-    allSkills = data.skills || [];
+    allSkills = (data.skills || []).filter(s => s.publish !== false);
     repo.owner = data.repoOwner || repo.owner;
     repo.name  = data.repoName  || repo.name;
 

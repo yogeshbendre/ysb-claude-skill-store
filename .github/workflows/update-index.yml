@@ -29,9 +29,14 @@ jobs:
           for path in sorted(glob.glob('skills/*/skill.json')):
               with open(path) as f:
                   try:
-                      skills.append(json.load(f))
+                      skill = json.load(f)
                   except json.JSONDecodeError as e:
                       print(f'Warning: skipping {path} — {e}')
+                      continue
+              if skill.get('publish') is False:
+                  print(f'Skipping unpublished skill: {path}')
+                  continue
+              skills.append(skill)
 
           skills.sort(key=lambda x: x.get('name', '').lower())
 

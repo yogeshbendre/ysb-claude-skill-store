@@ -27,6 +27,7 @@ skills/
 | `tags` | Yes | Array of lowercase tag strings, e.g. `["code", "review"]` |
 | `authorUrl` | No | URL to your GitHub profile |
 | `domain` | No | Broad category the skill belongs to, e.g. `"Code Formatting"`, `"Code Quality"`, `"Documentation"` — used to power the gallery's filter panel |
+| `publish` | No | Boolean. Set to `false` to keep a skill out of the gallery and the generated index (e.g. while still drafting it). Defaults to shown when omitted or `true` |
 | `license` | No | SPDX license identifier, e.g. `"MIT"` |
 | `createdAt` | No | Creation date in `YYYY-MM-DD` format |
 | `updatedAt` | No | Last update date in `YYYY-MM-DD` format |

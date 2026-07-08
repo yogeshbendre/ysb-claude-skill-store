@@ -3,6 +3,23 @@
   "repoName": "ysb-claude-skill-store",
   "skills": [
     {
+      "id": "beautify",
+      "name": "Beautify",
+      "description": "Cleans up dead code, applies language-aware formatting, and inserts a standardized file header into a source file.",
+      "version": "1.0.0",
+      "author": "yogeshbendre",
+      "authorUrl": "https://github.com/yogeshbendre",
+      "tags": [
+        "formatting",
+        "cleanup",
+        "code-quality",
+        "productivity"
+      ],
+      "license": "MIT",
+      "createdAt": "2026-07-08",
+      "updatedAt": "2026-07-08"
+    },
+    {
       "id": "code-reviewer",
       "name": "Code Reviewer",
       "description": "Performs a thorough code review covering bugs, security vulnerabilities, performance issues, and style \u2014 and outputs structured findings.",
@@ -20,6 +37,6 @@
       "updatedAt": "2026-07-01"
     }
   ],
-  "count": 1,
-  "generatedAt": "2026-07-06"
+  "count": 2,
+  "generatedAt": "2026-07-08"
 }

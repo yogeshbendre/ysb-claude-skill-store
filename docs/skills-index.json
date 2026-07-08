@@ -9,10 +9,65 @@
       "version": "1.0.0",
       "author": "yogeshbendre",
       "authorUrl": "https://github.com/yogeshbendre",
+      "domain": "Code Formatting",
       "tags": [
         "formatting",
         "cleanup",
         "code-quality",
+        "productivity"
+      ],
+      "license": "MIT",
+      "createdAt": "2026-07-08",
+      "updatedAt": "2026-07-08"
+    },
+    {
+      "id": "code-cleaner",
+      "name": "Code Cleaner",
+      "description": "Removes dead code, unused variables/functions, and duplicate logic from a source file.",
+      "version": "1.0.0",
+      "author": "yogeshbendre",
+      "authorUrl": "https://github.com/yogeshbendre",
+      "domain": "Code Quality",
+      "tags": [
+        "cleanup",
+        "dead-code",
+        "code-quality",
+        "refactoring"
+      ],
+      "license": "MIT",
+      "createdAt": "2026-07-08",
+      "updatedAt": "2026-07-08"
+    },
+    {
+      "id": "code-formatter",
+      "name": "Code Formatter",
+      "description": "Applies consistent, language-aware formatting to a source file without changing its logic.",
+      "version": "1.0.0",
+      "author": "yogeshbendre",
+      "authorUrl": "https://github.com/yogeshbendre",
+      "domain": "Code Formatting",
+      "tags": [
+        "formatting",
+        "style",
+        "code-quality",
+        "productivity"
+      ],
+      "license": "MIT",
+      "createdAt": "2026-07-08",
+      "updatedAt": "2026-07-08"
+    },
+    {
+      "id": "code-header",
+      "name": "Code Header",
+      "description": "Inserts or updates a standardized file header with author, co-author, and summary fields.",
+      "version": "1.0.0",
+      "author": "yogeshbendre",
+      "authorUrl": "https://github.com/yogeshbendre",
+      "domain": "Documentation",
+      "tags": [
+        "documentation",
+        "header",
+        "metadata",
         "productivity"
       ],
       "license": "MIT",
@@ -26,6 +81,7 @@
       "version": "1.0.0",
       "author": "example-user",
       "authorUrl": "https://github.com/example-user",
+      "domain": "Code Quality",
       "tags": [
         "code",
         "review",
@@ -37,6 +93,6 @@
       "updatedAt": "2026-07-01"
     }
   ],
-  "count": 2,
+  "count": 5,
   "generatedAt": "2026-07-08"
 }

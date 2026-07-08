@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "author": "yogeshbendre",
   "authorUrl": "https://github.com/yogeshbendre",
+  "domain": "Code Formatting",
   "tags": ["formatting", "cleanup", "code-quality", "productivity"],
   "license": "MIT",
   "createdAt": "2026-07-08",

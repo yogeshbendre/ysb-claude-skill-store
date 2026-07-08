@@ -1,0 +1,13 @@
+{
+  "id": "code-header",
+  "name": "Code Header",
+  "description": "Inserts or updates a standardized file header with author, co-author, and summary fields.",
+  "version": "1.0.0",
+  "author": "yogeshbendre",
+  "authorUrl": "https://github.com/yogeshbendre",
+  "domain": "Documentation",
+  "tags": ["documentation", "header", "metadata", "productivity"],
+  "license": "MIT",
+  "createdAt": "2026-07-08",
+  "updatedAt": "2026-07-08"
+}

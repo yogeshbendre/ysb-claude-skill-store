@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "author": "example-user",
   "authorUrl": "https://github.com/example-user",
+  "domain": "Code Quality",
   "tags": ["code", "review", "security", "quality"],
   "license": "MIT",
   "createdAt": "2026-07-01",

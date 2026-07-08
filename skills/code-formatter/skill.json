@@ -1,0 +1,13 @@
+{
+  "id": "code-formatter",
+  "name": "Code Formatter",
+  "description": "Applies consistent, language-aware formatting to a source file without changing its logic.",
+  "version": "1.0.0",
+  "author": "yogeshbendre",
+  "authorUrl": "https://github.com/yogeshbendre",
+  "domain": "Code Formatting",
+  "tags": ["formatting", "style", "code-quality", "productivity"],
+  "license": "MIT",
+  "createdAt": "2026-07-08",
+  "updatedAt": "2026-07-08"
+}

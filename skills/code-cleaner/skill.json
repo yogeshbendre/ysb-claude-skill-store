@@ -1,0 +1,13 @@
+{
+  "id": "code-cleaner",
+  "name": "Code Cleaner",
+  "description": "Removes dead code, unused variables/functions, and duplicate logic from a source file.",
+  "version": "1.0.0",
+  "author": "yogeshbendre",
+  "authorUrl": "https://github.com/yogeshbendre",
+  "domain": "Code Quality",
+  "tags": ["cleanup", "dead-code", "code-quality", "refactoring"],
+  "license": "MIT",
+  "createdAt": "2026-07-08",
+  "updatedAt": "2026-07-08"
+}

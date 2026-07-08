@@ -26,6 +26,7 @@ skills/
 | `author` | Yes | Your GitHub username |
 | `tags` | Yes | Array of lowercase tag strings, e.g. `["code", "review"]` |
 | `authorUrl` | No | URL to your GitHub profile |
+| `domain` | No | Broad category the skill belongs to, e.g. `"Code Formatting"`, `"Code Quality"`, `"Documentation"` — used to power the gallery's filter panel |
 | `license` | No | SPDX license identifier, e.g. `"MIT"` |
 | `createdAt` | No | Creation date in `YYYY-MM-DD` format |
 | `updatedAt` | No | Last update date in `YYYY-MM-DD` format |
@@ -40,6 +41,7 @@ skills/
   "version": "1.0.0",
   "author": "your-github-username",
   "authorUrl": "https://github.com/your-github-username",
+  "domain": "Documentation",
   "tags": ["docs", "api", "writing"],
   "license": "MIT",
   "createdAt": "2026-07-01",

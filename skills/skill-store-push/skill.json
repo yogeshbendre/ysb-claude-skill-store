@@ -1,0 +1,13 @@
+{
+  "id": "skill-store-push",
+  "name": "Skill Store Push",
+  "description": "Converts an external skill into this store's format (skill.json/skill.md/README.md) and optionally commits and pushes it.",
+  "version": "1.0.0",
+  "author": "yogeshbendre",
+  "authorUrl": "https://github.com/yogeshbendre",
+  "domain": "Contributor Tooling",
+  "tags": ["automation", "contributor-tools", "git", "meta"],
+  "license": "MIT",
+  "createdAt": "2026-07-08",
+  "updatedAt": "2026-07-08"
+}

@@ -48,3 +48,4 @@ The GitHub Actions workflow auto-populates `repoOwner` and `repoName` in `docs/s
 | [Code Formatter](skills/code-formatter/) | Applies consistent, language-aware formatting to a source file without changing its logic | formatting, style, code-quality, productivity |
 | [Code Header](skills/code-header/) | Inserts or updates a standardized file header with author, co-author, and summary fields | documentation, header, metadata, productivity |
 | [Code Reviewer](skills/code-reviewer/) | Reviews code for bugs, security, performance, and style | code, review, security, quality |
+| [Skill Store Push](skills/skill-store-push/) | Converts an external skill into this store's format and optionally commits and pushes it | automation, contributor-tools, git, meta |

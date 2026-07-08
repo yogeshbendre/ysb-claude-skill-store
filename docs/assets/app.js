@@ -3,6 +3,7 @@ let repo = { owner: 'yogeshbendre', name: 'ysb-claude-skill-store' };
 let searchQuery = '';
 
 const FACETS = [
+  { key: 'domain',  label: 'Domain',  getValues: s => [s.domain || 'Uncategorized'] },
   { key: 'author',  label: 'Author',  getValues: s => [s.author || 'Unknown'] },
   { key: 'tags',    label: 'Area',    getValues: s => (s.tags && s.tags.length) ? s.tags : ['Uncategorized'] },
   { key: 'license', label: 'License', getValues: s => [s.license || 'Unspecified'] },

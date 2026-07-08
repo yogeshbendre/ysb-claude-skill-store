@@ -43,4 +43,5 @@ The GitHub Actions workflow auto-populates `repoOwner` and `repoName` in `docs/s
 
 | Skill | Description | Tags |
 |---|---|---|
+| [Beautify](skills/beautify/) | Cleans up dead code, applies language-aware formatting, and inserts a standardized file header | formatting, cleanup, code-quality, productivity |
 | [Code Reviewer](skills/code-reviewer/) | Reviews code for bugs, security, performance, and style | code, review, security, quality |

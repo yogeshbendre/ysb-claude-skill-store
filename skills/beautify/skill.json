@@ -1,0 +1,12 @@
+{
+  "id": "beautify",
+  "name": "Beautify",
+  "description": "Cleans up dead code, applies language-aware formatting, and inserts a standardized file header into a source file.",
+  "version": "1.0.0",
+  "author": "yogeshbendre",
+  "authorUrl": "https://github.com/yogeshbendre",
+  "tags": ["formatting", "cleanup", "code-quality", "productivity"],
+  "license": "MIT",
+  "createdAt": "2026-07-08",
+  "updatedAt": "2026-07-08"
+}

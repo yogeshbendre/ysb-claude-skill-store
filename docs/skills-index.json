@@ -75,24 +75,6 @@
       "updatedAt": "2026-07-08"
     },
     {
-      "id": "code-reviewer",
-      "name": "Code Reviewer",
-      "description": "Performs a thorough code review covering bugs, security vulnerabilities, performance issues, and style \u2014 and outputs structured findings.",
-      "version": "1.0.0",
-      "author": "example-user",
-      "authorUrl": "https://github.com/example-user",
-      "domain": "Code Quality",
-      "tags": [
-        "code",
-        "review",
-        "security",
-        "quality"
-      ],
-      "license": "MIT",
-      "createdAt": "2026-07-01",
-      "updatedAt": "2026-07-01"
-    },
-    {
       "id": "skill-store-push",
       "name": "Skill Store Push",
       "description": "Converts an external skill into this store's format (skill.json/skill.md/README.md) and optionally commits and pushes it.",
@@ -111,6 +93,6 @@
       "updatedAt": "2026-07-08"
     }
   ],
-  "count": 6,
+  "count": 5,
   "generatedAt": "2026-07-08"
 }

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Skill Store — Overview</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+    --purple-dark: #5b21b6;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 12px;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  .deck { position: relative; width: 100%; height: 100vh; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5vh 8vw 11vh;
+    overflow-y: auto;
+  }
+
+  .slide.active { display: flex; }
+
+  .slide .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--purple);
+    margin-bottom: .75rem;
+  }
+
+  .slide h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    line-height: 1.15;
+  }
+
+  .slide h2.subtitle {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+  }
+
+  .slide ul { list-style: none; display: flex; flex-direction: column; gap: .85rem; max-width: 780px; }
+  .slide ul.steps { counter-reset: step; }
+  .slide ul.steps li { counter-increment: step; padding-left: 2.5rem; position: relative; }
+  .slide ul.steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0; top: -.1rem;
+    width: 1.8rem; height: 1.8rem;
+    border-radius: 50%;
+    background: var(--purple);
+    color: white;
+    font-weight: 700;
+    font-size: .9rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .slide ul.bullets li { padding-left: 1.6rem; position: relative; }
+  .slide ul.bullets li::before {
+    content: '';
+    position: absolute; left: 0; top: .5rem;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--purple);
+  }
+  .slide li { font-size: 1.15rem; line-height: 1.5; }
+  .slide li strong { color: var(--text); }
+  .slide li .desc { color: var(--muted); font-size: 1rem; }
+
+  .slide pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    font-size: .95rem;
+    line-height: 1.55;
+    max-width: 780px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+  }
+
+  .slide pre .dim { color: #64748b; }
+  .slide pre .hl { color: #c4b5fd; }
+  .slide pre .hl2 { color: #86efac; }
+
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+  .pipeline .node {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    font-size: .95rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    max-width: 220px;
+  }
+  .pipeline .node span { display: block; font-weight: 400; color: var(--muted); font-size: .82rem; margin-top: .3rem; }
+  .pipeline .arrow { font-size: 1.5rem; color: var(--purple); }
+
+  .mock {
+    display: flex; gap: 1.5rem; align-items: flex-start; margin-top: 1rem; flex-wrap: wrap;
+  }
+  .mock-card {
+    width: 250px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 14px rgba(0,0,0,.08);
+    overflow: hidden;
+  }
+  .mock-card .mb { padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: .5rem; }
+  .mock-card .mt { display: flex; justify-content: space-between; font-weight: 700; font-size: .95rem; }
+  .mock-card .md { color: var(--muted); font-size: .8rem; }
+  .mock-card .mtags { display: flex; gap: .3rem; flex-wrap: wrap; }
+  .mock-card .mtags span { background: var(--purple-light); color: var(--purple-dark); font-size: .68rem; font-weight: 600; padding: .1rem .5rem; border-radius: 100px; }
+  .mock-card .mf { border-top: 1px solid var(--border); padding: .6rem 1.1rem; display: flex; justify-content: space-between; align-items: center; font-size: .72rem; color: var(--muted); }
+  .mock-card .mf .b { background: var(--purple); color: white; padding: .25rem .5rem; border-radius: 5px; font-weight: 700; font-size: .68rem; }
+
+  .mock-panel {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1rem;
+    width: 190px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.08);
+  }
+  .mock-panel .fg { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: .6rem 0 .4rem; }
+  .mock-panel .fo { font-size: .82rem; display: flex; justify-content: space-between; padding: .15rem 0; }
+  .mock-panel .fo span:last-child { color: var(--muted); }
+
+  /* Title slide */
+  #slide-0 {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, var(--purple-dark) 0%, var(--purple) 100%);
+    color: white;
+  }
+  #slide-0 .brand-icon { font-size: 4rem; margin-bottom: .5rem; }
+  #slide-0 h1 { font-size: 3.4rem; color: white; }
+  #slide-0 h2.subtitle { color: rgba(255,255,255,.85); font-size: 1.35rem; }
+  #slide-0 .links { margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  #slide-0 .links span {
+    background: rgba(255,255,255,.15);
+    padding: .5rem 1.1rem;
+    border-radius: 100px;
+    font-size: .9rem;
+    font-weight: 600;
+  }
+
+  /* Closing slide */
+  #slide-11 {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Nav bar */
+  .navbar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 8vh;
+    min-height: 56px;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    z-index: 20;
+  }
+  .navbar .left { display: flex; align-items: center; gap: .75rem; }
+  .navbar button {
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    border-radius: 8px;
+    padding: .5rem .9rem;
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .navbar button:hover { border-color: var(--purple); color: var(--purple); }
+  .navbar button:disabled { opacity: .35; cursor: default; }
+  .navbar button:disabled:hover { border-color: var(--border); color: var(--text); }
+  #counter { font-size: .82rem; color: var(--muted); font-weight: 600; min-width: 4rem; text-align: center; }
+  #notes-toggle.active { background: var(--purple); color: white; border-color: var(--purple); }
+
+  .progress-track { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: var(--border); z-index: 21; }
+  .progress-fill { height: 100%; background: var(--purple); transition: width .25s ease; width: 0%; }
+
+  /* Notes panel */
+  #notes-panel {
+    position: fixed;
+    right: 0; bottom: 8vh;
+    width: 340px;
+    max-height: 46vh;
+    background: #111827;
+    color: #e2e8f0;
+    border-radius: 12px 0 0 0;
+    padding: 1.1rem 1.25rem;
+    overflow-y: auto;
+    font-size: .88rem;
+    line-height: 1.5;
+    box-shadow: -4px 0 20px rgba(0,0,0,.25);
+    z-index: 20;
+    display: none;
+  }
+  #notes-panel.open { display: block; }
+  #notes-panel .nt { font-weight: 700; color: #c4b5fd; margin-bottom: .3rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; }
+  #notes-panel .nsecs { color: #94a3b8; font-weight: 400; }
+
+  @media (max-width: 720px) {
+    .slide h1 { font-size: 1.8rem; }
+    .slide li { font-size: 1rem; }
+    #notes-panel { width: 100%; left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+<div class="deck" id="deck">
+
+  <!-- 0: Title -->
+  <section class="slide active" id="slide-0">
+    <div class="brand-icon">⚡</div>
+    <h1>Claude Skill Store</h1>
+    <h2 class="subtitle">Discover, share, and reuse Claude Code skills — in one line.</h2>
+    <div class="links">
+      <span>github.com/yogeshbendre/ysb-claude-skill-store</span>
+      <span>yogeshbendre.github.io/ysb-claude-skill-store</span>
+    </div>
+  </section>
+
+  <!-- 1: Why -->
+  <section class="slide" id="slide-1">
+    <div class="eyebrow">Why this exists</div>
+    <h1>Skills are just markdown — but sharing them isn't</h1>
+    <ul class="bullets">
+      <li><strong>A Claude Code skill is a prompt file</strong> <span class="desc">— drop it in <code>.claude/commands/</code> and it becomes a slash command.</span></li>
+      <li><strong>Every team reinvents the same ones</strong> <span class="desc">— code review, formatting, changelogs, headers...</span></li>
+      <li><strong>There was no shared, browsable place</strong> <span class="desc">to find and install one in seconds.</span></li>
+    </ul>
+    <ul class="bullets" style="margin-top:1.5rem;">
+      <li><strong>The fix:</strong> <span class="desc">one repo of skills, one gallery site to browse them, one command to install.</span></li>
+    </ul>
+  </section>
+
+  <!-- 2: Repo structure -->
+  <section class="slide" id="slide-2">
+    <div class="eyebrow">Repo structure</div>
+    <h1>Everything lives in one repo</h1>
+    <pre>ysb-claude-skill-store/
+├── <span class="hl">skills/</span>                    <span class="dim"># one folder per skill</span>
+│   ├── beautify/
+│   ├── code-cleaner/
+│   ├── code-formatter/
+│   ├── code-header/
+│   ├── code-reviewer/
+│   └── skill-store-push/
+├── <span class="hl2">docs/</span>                      <span class="dim"># the gallery site (GitHub Pages)</span>
+│   ├── index.html
+│   ├── assets/  (style.css, app.js)
+│   └── skills-index.json    <span class="dim"># auto-generated, don't hand-edit</span>
+├── .github/workflows/       <span class="dim"># CI regenerates the index on push</span>
+├── CONTRIBUTING.md           <span class="dim"># the rules for adding a skill</span>
+└── README.md</pre>
+  </section>
+
+  <!-- 3: Anatomy of a skill -->
+  <section class="slide" id="slide-3">
+    <div class="eyebrow">Anatomy of a skill</div>
+    <h1>Every skill folder has the same three files</h1>
+    <pre>skills/&lt;your-skill-id&gt;/
+├── <span class="hl">skill.json</span>   <span class="dim"># metadata: id, name, description,</span>
+│               <span class="dim"># version, author, domain, tags, license, publish</span>
+├── <span class="hl">skill.md</span>     <span class="dim"># the actual prompt Claude runs for /&lt;id&gt;</span>
+└── <span class="hl">README.md</span>   <span class="dim"># usage docs and examples</span></pre>
+    <ul class="bullets" style="margin-top:1.5rem;">
+      <li><strong>skill.json</strong> <span class="desc">is what powers search, filtering, and the install link — nothing here is hand-maintained in the gallery.</span></li>
+    </ul>
+  </section>
+
+  <!-- 4: Pipeline -->
+  <section class="slide" id="slide-4">
+    <div class="eyebrow">How it's wired together</div>
+    <h1>Push a skill → the gallery updates itself</h1>
+    <div class="pipeline">
+      <div class="node">skill.json<span>in skills/&lt;id&gt;/</span></div>
+      <div class="arrow">→</div>
+      <div class="node">GitHub Action<span>scans every skill.json</span></div>
+      <div class="arrow">→</div>
+      <div class="node">skills-index.json<span>generated in docs/</span></div>
+      <div class="arrow">→</div>
+      <div class="node">Gallery UI<span>fetches it on load</span></div>
+    </div>
+    <ul class="bullets" style="margin-top:2rem;">
+      <li><strong>No manual rebuild step.</strong> <span class="desc">Push to <code>skills/</code> and the index regenerates automatically.</span></li>
+      <li><strong><code>"publish": false"</code></strong> <span class="desc">in skill.json keeps a draft skill out of the index entirely.</span></li>
+    </ul>
+  </section>
+
+  <!-- 5: UI overview -->
+  <section class="slide" id="slide-5">
+    <div class="eyebrow">The gallery UI</div>
+    <h1>Browse, search, and filter</h1>
+    <div class="mock">
+      <div class="mock-panel">
+        <div style="font-weight:700; font-size:.85rem;">Filters</div>
+        <div class="fg">Domain</div>
+        <div class="fo"><span>Code Formatting</span><span>2</span></div>
+        <div class="fo"><span>Documentation</span><span>1</span></div>
+        <div class="fg">Author</div>
+        <div class="fo"><span>yogeshbendre</span><span>4</span></div>
+      </div>
+      <div class="mock-card">
+        <div class="mb">
+          <div class="mt"><span>Beautify</span><span style="color:var(--muted); font-weight:400; font-size:.7rem;">v1.0.0</span></div>
+          <div class="md">Cleans up dead code, formats, and adds a header.</div>
+          <div class="mtags"><span>formatting</span><span>cleanup</span></div>
+        </div>
+        <div class="mf"><span>by yogeshbendre</span><span class="b">Copy install</span></div>
+      </div>
+    </div>
+    <ul class="bullets" style="margin-top:1.75rem;">
+      <li><strong>Search bar</strong> <span class="desc">matches name, description, and tags.</span></li>
+      <li><strong>Left filter panel</strong> <span class="desc">— Domain, Author, Area, License, Version — with live counts and removable chips.</span></li>
+    </ul>
+  </section>
+
+  <!-- 6: UI theme + polish -->
+  <section class="slide" id="slide-6">
+    <div class="eyebrow">The gallery UI</div>
+    <h1>Light/dark theme, mobile-friendly</h1>
+    <ul class="bullets">
+      <li><strong>Theme toggle, top right of the header</strong> <span class="desc">— remembers your choice, respects OS preference on first visit.</span></li>
+      <li><strong>Filter panel becomes a slide-in drawer on mobile</strong> <span class="desc">via a "Filters" button next to search.</span></li>
+      <li><strong>Every card</strong> <span class="desc">links to the raw skill.md and the source folder on GitHub, in addition to the one-line install.</span></li>
+    </ul>
+  </section>
+
+  <!-- 7: Downloading a skill -->
+  <section class="slide" id="slide-7">
+    <div class="eyebrow">Using a skill</div>
+    <h1>Download &amp; install in under a minute</h1>
+    <ul class="steps">
+      <li><strong>Open the gallery</strong> <span class="desc">at yogeshbendre.github.io/ysb-claude-skill-store</span></li>
+      <li><strong>Search or filter</strong> <span class="desc">to find the skill you want</span></li>
+      <li><strong>Click "Copy install"</strong> <span class="desc">on its card</span></li>
+      <li><strong>Paste into your project's terminal</strong> <span class="desc">— it curls the skill.md into <code>.claude/commands/</code></span></li>
+      <li><strong>Run <code>/&lt;skill-id&gt;</code></strong> <span class="desc">inside Claude Code — done</span></li>
+    </ul>
+  </section>
+
+  <!-- 8: Uploading a skill -->
+  <section class="slide" id="slide-8">
+    <div class="eyebrow">Contributing a skill</div>
+    <h1>Publishing your own skill</h1>
+    <ul class="steps">
+      <li><strong>Clone or fork the repo</strong></li>
+      <li><strong>Create <code>skills/&lt;your-skill-id&gt;/</code></strong></li>
+      <li><strong>Add <code>skill.json</code>, <code>skill.md</code>, <code>README.md</code></strong> <span class="desc">— see CONTRIBUTING.md for the schema</span></li>
+      <li><strong>Add a row to the skills table</strong> <span class="desc">in the root README.md</span></li>
+      <li><strong>Push, or open a pull request</strong> <span class="desc">— CI regenerates the gallery automatically</span></li>
+    </ul>
+  </section>
+
+  <!-- 9: Shortcut -->
+  <section class="slide" id="slide-9">
+    <div class="eyebrow">Shortcut</div>
+    <h1>Or let a skill do it for you</h1>
+    <ul class="bullets">
+      <li><strong><code>/skill-store-push &lt;path&gt;</code></strong> <span class="desc">point it at any existing command file or skill folder, from any repo.</span></li>
+      <li><strong>It drafts everything</strong> <span class="desc">— skill.json, skill.md, README.md — and asks you directly about anything ambiguous (domain, author...).</span></li>
+      <li><strong>It only commits and pushes</strong> <span class="desc">after you explicitly say yes.</span></li>
+    </ul>
+  </section>
+
+  <!-- 10: Recap -->
+  <section class="slide" id="slide-10">
+    <div class="eyebrow">Recap</div>
+    <h1>One repo. One gallery. One line to install.</h1>
+    <ul class="bullets">
+      <li><strong>Skills live in <code>skills/&lt;id&gt;/</code></strong> <span class="desc">as skill.json + skill.md + README.md</span></li>
+      <li><strong>The gallery builds itself</strong> <span class="desc">from those files via GitHub Actions</span></li>
+      <li><strong>Anyone can install a skill in one command</strong> <span class="desc">— and contribute one back just as easily</span></li>
+    </ul>
+  </section>
+
+  <!-- 11: Thanks -->
+  <section class="slide" id="slide-11">
+    <div class="brand-icon">⚡</div>
+    <h1>Thanks!</h1>
+    <div class="links">
+      <span>github.com/yogeshbendre/ysb-claude-skill-store</span>
+      <span>yogeshbendre.github.io/ysb-claude-skill-store</span>
+    </div>
+  </section>
+
+</div>
+
+<div class="navbar">
+  <div class="left">
+    <button id="prev">← Prev</button>
+    <button id="next">Next →</button>
+    <span id="counter">1 / 12</span>
+  </div>
+  <button id="notes-toggle">🎙 Speaker notes (N)</button>
+</div>
+
+<div id="notes-panel"></div>
+
+<script>
+  const notes = [
+    "Hi — today I'll give a quick tour of the Claude Skill Store: a small community repo for sharing reusable Claude Code skills, plus the gallery site that goes with it. (~15s)",
+    "A Claude Code skill is just a markdown prompt file that becomes a slash command. The problem is every team ends up reinventing the same handful of skills — code review, formatting, changelogs — with no shared place to find and install one. This store fixes that: one repo, one gallery, one-line install. (~30s)",
+    "Everything lives in a single repo. `skills/` holds one folder per skill. `docs/` is the actual gallery website, served via GitHub Pages — including `skills-index.json`, which is auto-generated, never hand-edited. `.github/workflows/` is the CI job that regenerates that index. `CONTRIBUTING.md` documents the rules for adding a new skill. (~45s)",
+    "Every skill folder has exactly three files: `skill.json` for metadata — id, name, description, version, author, domain, tags, license, and an optional publish flag — `skill.md`, which is the actual prompt Claude runs, and a `README.md` with usage docs. The skill.json is what powers search, filtering, and the install link in the gallery — nothing there is hand-maintained. (~40s)",
+    "Here's how it's wired together: you push a skill.json into skills/<id>/, a GitHub Action scans every skill.json in the repo, regenerates docs/skills-index.json, and the gallery UI fetches that on load. No manual rebuild step — and setting `publish: false` in a skill.json keeps a draft out of the index entirely, so you can work on something without it going live. (~30s)",
+    "The gallery itself: a header with the brand and skill count, a search bar, a left-hand filter panel, and a grid of cards. Each card shows the name, version, description, tags, author, and three actions — Copy install, view the Raw file, or jump to the Source folder on GitHub. The filter panel covers Domain, Author, Area, License, and Version, each with live counts. (~40s)",
+    "A couple of polish details: the theme toggle sits top-right in the header, remembers your choice, and respects your OS preference on first visit. On mobile, the filter panel becomes a slide-in drawer opened via a Filters button next to search. (~35s)",
+    "Downloading a skill takes under a minute: open the gallery, search or filter to find what you want, click Copy install on its card — that copies a one-liner that curls the skill.md straight into your project's `.claude/commands/` folder — paste it into your terminal, and then just run `/<skill-id>` inside Claude Code. (~50s)",
+    "Publishing your own skill is just as simple: clone or fork the repo, create a `skills/<your-skill-id>/` folder, add skill.json, skill.md, and README.md following the schema in CONTRIBUTING.md, add a row to the skills table in the root README, and push or open a pull request. CI takes care of regenerating the gallery automatically. (~55s)",
+    "And if you don't want to do that by hand, there's a shortcut: the `skill-store-push` skill. Point it at any existing command file or skill folder from any repo, and it drafts the skill.json, skill.md, and README for you — asking you directly whenever something's ambiguous, like the domain or author — and it only commits and pushes after you explicitly say yes. (~30s)",
+    "To recap: one repo, with skills living in skills/<id>/ as three files; a gallery that builds itself from those files via GitHub Actions; and a one-line install for anyone who wants to use a skill, or contribute one back. (~20s)",
+    "Thanks for watching — the repo and the live gallery links are up on screen. (~15s)"
+  ];
+
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = 0;
+
+  const counterEl = document.getElementById('counter');
+  const progressFill = document.getElementById('progress-fill');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const notesToggle = document.getElementById('notes-toggle');
+  const notesPanel = document.getElementById('notes-panel');
+  let notesOpen = false;
+
+  function renderNotes() {
+    notesPanel.innerHTML = `<div class="nt">Slide ${current + 1} narration</div><div>${notes[current] || ''}</div>`;
+  }
+
+  function show(i) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    slides[current].classList.add('active');
+    counterEl.textContent = `${current + 1} / ${slides.length}`;
+    progressFill.style.width = `${((current + 1) / slides.length) * 100}%`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === slides.length - 1;
+    if (notesOpen) renderNotes();
+  }
+
+  prevBtn.addEventListener('click', () => show(current - 1));
+  nextBtn.addEventListener('click', () => show(current + 1));
+
+  notesToggle.addEventListener('click', () => {
+    notesOpen = !notesOpen;
+    notesPanel.classList.toggle('open', notesOpen);
+    notesToggle.classList.toggle('active', notesOpen);
+    if (notesOpen) renderNotes();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); show(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); show(0); }
+    else if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+    else if (e.key.toLowerCase() === 'n') { notesToggle.click(); }
+  });
+
+  show(0);
+</script>
+
+</body>
+</html>

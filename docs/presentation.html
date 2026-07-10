@@ -215,7 +215,32 @@
   .navbar button:disabled { opacity: .35; cursor: default; }
   .navbar button:disabled:hover { border-color: var(--border); color: var(--text); }
   #counter { font-size: .82rem; color: var(--muted); font-weight: 600; min-width: 4rem; text-align: center; }
-  #notes-toggle.active { background: var(--purple); color: white; border-color: var(--purple); }
+  #notes-toggle.active, #play-toggle.active { background: var(--purple); color: white; border-color: var(--purple); }
+  #autoplay-timer { font-size: .82rem; color: var(--muted); font-weight: 700; min-width: 2.5rem; text-align: center; font-variant-numeric: tabular-nums; }
+  .navbar .right { display: flex; gap: .5rem; }
+
+  /* Speaker view (opened as a separate window/tab via ?speaker=1) */
+  html.speaker-mode .deck,
+  html.speaker-mode .navbar,
+  html.speaker-mode .progress-track,
+  html.speaker-mode #notes-panel { display: none !important; }
+
+  #speaker-view { display: none; }
+  html.speaker-mode #speaker-view { display: flex; }
+  #speaker-view {
+    min-height: 100vh;
+    flex-direction: column;
+    background: #0b1220;
+    color: #e2e8f0;
+    padding: 3rem 4vw;
+  }
+  #speaker-view .sv-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2rem; }
+  #speaker-view .sv-counter { font-size: 1rem; color: #94a3b8; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  #speaker-view .sv-timer { font-size: 3rem; font-weight: 800; color: #c4b5fd; font-variant-numeric: tabular-nums; }
+  #speaker-view .sv-timer.idle { color: #475569; }
+  #speaker-view h1 { font-size: 1.9rem; margin-bottom: 1.5rem; color: #fff; max-width: 900px; }
+  #speaker-view .sv-notes { font-size: 1.25rem; line-height: 1.65; max-width: 900px; color: #cbd5e1; }
+  #speaker-view .sv-status { margin-top: auto; padding-top: 2rem; font-size: .85rem; color: #64748b; }
 
   .progress-track { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: var(--border); z-index: 21; }
   .progress-fill { height: 100%; background: var(--purple); transition: width .25s ease; width: 0%; }
@@ -249,6 +274,11 @@
 </style>
 </head>
 <body>
+<script>
+  if (new URLSearchParams(location.search).has('speaker')) {
+    document.documentElement.classList.add('speaker-mode');
+  }
+</script>
 
 <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
 
@@ -437,11 +467,26 @@
     <button id="prev">← Prev</button>
     <button id="next">Next →</button>
     <span id="counter">1 / 12</span>
+    <button id="play-toggle">▶ Auto-play</button>
+    <span id="autoplay-timer"></span>
   </div>
-  <button id="notes-toggle">🎙 Speaker notes (N)</button>
+  <div class="right">
+    <button id="speaker-view-btn">🖥 Speaker view</button>
+    <button id="notes-toggle">🎙 Speaker notes (N)</button>
+  </div>
 </div>
 
 <div id="notes-panel"></div>
+
+<div id="speaker-view">
+  <div class="sv-header">
+    <span class="sv-counter" id="sv-counter">Slide 1 / 12</span>
+    <span class="sv-timer idle" id="sv-timer">—</span>
+  </div>
+  <h1 id="sv-title"></h1>
+  <div class="sv-notes" id="sv-notes"></div>
+  <div class="sv-status" id="sv-status">Waiting for the main presentation window…</div>
+</div>
 
 <script>
   const notes = [
@@ -459,8 +504,14 @@
     "Thanks for watching — the repo and the live gallery links are up on screen. (~15s)"
   ];
 
+  const durations = [15, 30, 45, 40, 30, 40, 35, 50, 55, 30, 20, 15]; // seconds per slide — matches the (~Xs) cues in the narration above
+
   const slides = Array.from(document.querySelectorAll('.slide'));
+  const titles = slides.map(s => s.querySelector('h1')?.textContent.trim() || '');
   let current = 0;
+
+  const isSpeakerMode = document.documentElement.classList.contains('speaker-mode');
+  const bc = ('BroadcastChannel' in window) ? new BroadcastChannel('claude-skill-store-deck') : null;
 
   const counterEl = document.getElementById('counter');
   const progressFill = document.getElementById('progress-fill');
@@ -468,10 +519,55 @@
   const nextBtn = document.getElementById('next');
   const notesToggle = document.getElementById('notes-toggle');
   const notesPanel = document.getElementById('notes-panel');
+  const playToggle = document.getElementById('play-toggle');
+  const autoplayTimerEl = document.getElementById('autoplay-timer');
+  const speakerViewBtn = document.getElementById('speaker-view-btn');
   let notesOpen = false;
+  let playing = false;
+  let autoplayHandle = null;
+  let secondsLeft = 0;
 
   function renderNotes() {
     notesPanel.innerHTML = `<div class="nt">Slide ${current + 1} narration</div><div>${notes[current] || ''}</div>`;
+  }
+
+  function sendState() {
+    if (bc) bc.postMessage({ type: 'state', index: current, playing, secondsLeft });
+  }
+
+  function stopAutoplay(broadcast) {
+    playing = false;
+    clearInterval(autoplayHandle);
+    autoplayHandle = null;
+    secondsLeft = 0;
+    playToggle.textContent = '▶ Auto-play';
+    playToggle.classList.remove('active');
+    autoplayTimerEl.textContent = '';
+    if (broadcast !== false) sendState();
+  }
+
+  function armSlideTimer() {
+    clearInterval(autoplayHandle);
+    secondsLeft = durations[current] || 20;
+    autoplayTimerEl.textContent = `${secondsLeft}s`;
+    sendState();
+    autoplayHandle = setInterval(() => {
+      secondsLeft -= 1;
+      autoplayTimerEl.textContent = secondsLeft > 0 ? `${secondsLeft}s` : '…';
+      sendState();
+      if (secondsLeft <= 0) {
+        if (current === slides.length - 1) { stopAutoplay(); return; }
+        show(current + 1);
+        armSlideTimer();
+      }
+    }, 1000);
+  }
+
+  function startAutoplay() {
+    playing = true;
+    playToggle.textContent = '⏸ Pause';
+    playToggle.classList.add('active');
+    armSlideTimer();
   }
 
   function show(i) {
@@ -483,10 +579,19 @@
     prevBtn.disabled = current === 0;
     nextBtn.disabled = current === slides.length - 1;
     if (notesOpen) renderNotes();
+    if (!playing) sendState();
   }
 
-  prevBtn.addEventListener('click', () => show(current - 1));
-  nextBtn.addEventListener('click', () => show(current + 1));
+  prevBtn.addEventListener('click', () => { stopAutoplay(false); show(current - 1); });
+  nextBtn.addEventListener('click', () => { stopAutoplay(false); show(current + 1); });
+
+  playToggle.addEventListener('click', () => {
+    if (playing) stopAutoplay(); else startAutoplay();
+  });
+
+  speakerViewBtn.addEventListener('click', () => {
+    window.open(location.pathname + '?speaker=1', 'claude-skill-store-speaker', 'width=520,height=760');
+  });
 
   notesToggle.addEventListener('click', () => {
     notesOpen = !notesOpen;
@@ -496,14 +601,53 @@
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); show(current + 1); }
-    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(current - 1); }
-    else if (e.key === 'Home') { e.preventDefault(); show(0); }
-    else if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); stopAutoplay(false); show(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); stopAutoplay(false); show(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); stopAutoplay(false); show(0); }
+    else if (e.key === 'End') { e.preventDefault(); stopAutoplay(false); show(slides.length - 1); }
     else if (e.key.toLowerCase() === 'n') { notesToggle.click(); }
+    else if (e.key.toLowerCase() === 'p') { playToggle.click(); }
   });
 
-  show(0);
+  // --- Speaker view: a second window/tab opened with ?speaker=1, mirrors state via BroadcastChannel ---
+  const svCounter = document.getElementById('sv-counter');
+  const svTimer = document.getElementById('sv-timer');
+  const svTitle = document.getElementById('sv-title');
+  const svNotes = document.getElementById('sv-notes');
+  const svStatus = document.getElementById('sv-status');
+
+  function renderSpeakerFrame(index, secsLeft, isPlaying) {
+    svCounter.textContent = `Slide ${index + 1} / ${slides.length}`;
+    svTitle.textContent = titles[index] || '';
+    svNotes.textContent = notes[index] || '';
+    if (isPlaying && secsLeft > 0) {
+      svTimer.textContent = `${secsLeft}s`;
+      svTimer.classList.remove('idle');
+    } else {
+      svTimer.textContent = '—';
+      svTimer.classList.add('idle');
+    }
+    svStatus.textContent = 'Synced with the main presentation window.';
+  }
+
+  if (bc) {
+    if (isSpeakerMode) {
+      bc.onmessage = (e) => {
+        const msg = e.data;
+        if (msg && msg.type === 'state') renderSpeakerFrame(msg.index, msg.secondsLeft, msg.playing);
+      };
+      bc.postMessage({ type: 'request-state' });
+    } else {
+      bc.onmessage = (e) => {
+        if (e.data && e.data.type === 'request-state') sendState();
+      };
+    }
+  } else if (isSpeakerMode) {
+    svStatus.textContent = "This browser doesn't support live sync — open the main window to follow along.";
+  }
+
+  if (isSpeakerMode) document.title = 'Speaker notes — Claude Skill Store';
+  else show(0);
 </script>
 
 </body>

@@ -1,0 +1,13 @@
+{
+  "id": "code-summary",
+  "name": "Code Summary",
+  "description": "Generates a quick 4-5 line summary explaining the intent of a source file.",
+  "version": "1.0.0",
+  "author": "yogeshbendre",
+  "authorUrl": "https://github.com/yogeshbendre",
+  "domain": "Documentation",
+  "tags": ["documentation", "summary", "code-quality", "productivity"],
+  "license": "MIT",
+  "createdAt": "2026-07-10",
+  "updatedAt": "2026-07-10"
+}
